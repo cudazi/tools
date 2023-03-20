@@ -27,16 +27,16 @@ function processCSV() {
     });
     
     // Generate output table
-    var outputTable = "<thead><tr><th>Done</th><th>ID</th><th>IC</th><th>Name</th><th>Team</th><th>Notes</th></tr></thead><tbody>";
+    var outputTable = "<thead><tr><th>Customers notified?</th><th>ID</th><th>IC</th><th>Name</th><th>Team</th><th>Notes</th></tr></thead><tbody>";
 
     outputData.forEach(function(row) {
-      outputTable += "<tr><td>&nbsp;</td><td><a title='Open bug in Admin' href='https://administrator.agorapulse.com/bugs/" + row.id + "''>" + row.id + "</a></td><td><a class='searchicon' title='Search IC for this bug ID' href='https://app.intercom.com/a/inbox/c0y5aza9/search?q=%22" + row.id + "%22' target='_blank'>&#128270;</a></td><td>" + row.name + "</td><td>" + row.team + "</td><td>&nbsp;</td></tr>";
+      outputTable += "<tr><td>&nbsp;</td><td><a href='https://administrator.agorapulse.com/bugs/" + row.id + "''>" + row.id + "</a></td><td><a class='searchicon' href='https://app.intercom.com/a/inbox/c0y5aza9/search?q=%22" + row.id + "%22' target='_blank'>&#128270;</a></td><td>" + row.name + "</td><td>" + row.team + "</td><td>&nbsp;</td></tr>";
     });
 
     outputTable += "</tbody>";
 
     // Create a summary also for copying over
-    summary = (outputData.length + 1) + " bugs from this file created " + csvAge; 
+    summary = (outputData.length + 1) + " bugs output. Export file was created " + csvAge; 
     document.getElementById("summary").innerHTML = summary;
 
     // Display output table
