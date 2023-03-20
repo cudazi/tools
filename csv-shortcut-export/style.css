@@ -1,0 +1,50 @@
+body {
+  font-family: sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+}
+
+/*label {
+  font-weight: bold;
+  margin-bottom: 10px;
+}*/
+
+table {
+  border-collapse: collapse;
+  margin: 10px auto 100px auto;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  font-weight: bold;
+}
+#summary {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 20px;
+  border-top: 1px solid #ccc;
+  padding-top: 20px;
+}
+#uploader button {
+    margin-top: 50px;
+}
+#intro {
+  text-align: center;
+}
+a.searchicon{
+  text-decoration: none;
+}

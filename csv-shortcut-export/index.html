@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CSV Cleaner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>CSV Cleaner</h1>
+  <p id="intro">Upload an exported shortcut CSV, click Process. Cleaned up CSV appears on screen for copying into Slite. Reload to reset.</p>
+  <form id="uploader">
+    <input type="file" id="csv" name="csv" accept="text/csv">
+    <button type="button" onclick="processCSV()">Process</button>
+  </form>
+  <p id="summary"></p>
+  <table id="output"></table>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.0/papaparse.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
