@@ -7,6 +7,7 @@ function processCSV() {
   var csvAge = csvFile.lastModifiedDate;
   var reader = new FileReader();
   var summary;
+  var rowCounter = 0;
 
   reader.onload = function(event) {
     var csvData = event.target.result;
@@ -27,10 +28,11 @@ function processCSV() {
     });
     
     // Generate output table
-    var outputTable = "<thead><tr><th>Customers notified?</th><th>ID</th><th>IC</th><th>Name</th><th>Team</th><th>Notes</th></tr></thead><tbody>";
+    var outputTable = "<thead><tr><th>&nbsp;</th><th>Customers notified?</th><th>ID</th><th>IC</th><th>Name</th><th>Team</th><th>Notes / Questions</th></tr></thead><tbody>";
 
     outputData.forEach(function(row) {
-      outputTable += "<tr><td>&nbsp;</td><td><a href='https://administrator.agorapulse.com/bugs/" + row.id + "''>" + row.id + "</a></td><td><a class='searchicon' href='https://app.intercom.com/a/inbox/c0y5aza9/search?q=%22" + row.id + "%22' target='_blank'>&#128270;</a></td><td>" + row.name + "</td><td>" + row.team + "</td><td>&nbsp;</td></tr>";
+      rowCounter++;
+      outputTable += "<tr><td>" + rowCounter + "</td><td>&nbsp;</td><td><a href='https://administrator.agorapulse.com/bugs/" + row.id + "''>" + row.id + "</a></td><td><a class='searchicon' href='https://app.intercom.com/a/inbox/c0y5aza9/search?q=%22" + row.id + "%22' target='_blank'>&#128270;</a></td><td>" + row.name + "</td><td>" + row.team + "</td><td>&nbsp;</td></tr>";
     });
 
     outputTable += "</tbody>";
