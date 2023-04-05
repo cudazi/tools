@@ -38,7 +38,7 @@ function processCSV() {
     outputTable += "</tbody>";
 
     // Create a summary also for copying over
-    summary = (outputData.length + 1) + " bugs output. Export file was created " + csvAge; 
+    summary = (outputData.length) + " bugs output. Export file was created " + csvAge; 
     document.getElementById("summary").innerHTML = summary;
 
     // Display output table
