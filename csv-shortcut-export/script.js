@@ -28,7 +28,7 @@ function processCSV() {
     });
     
     // Generate output table
-    var outputTable = "<thead><tr><th>&nbsp;</th><th>Customers notified by: Support hero name(s)</th><th>ID</th><th>IC</th><th>Name</th><th>Team</th><th>Notes / Questions</th></tr></thead><tbody>";
+    var outputTable = "<thead><tr><th>&nbsp;</th><th>Customers notified / Support hero(s) who checked</th><th>ID</th><th>IC</th><th>Name</th><th>Team</th><th>Notes / Questions</th></tr></thead><tbody>";
 
     outputData.forEach(function(row) {
       rowCounter++;
