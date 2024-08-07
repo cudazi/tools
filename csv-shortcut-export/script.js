@@ -32,7 +32,7 @@ function processCSV() {
 
     outputData.forEach(function(row) {
       rowCounter++;
-      outputTable += "<tr><td>" + rowCounter + "</td><td>&nbsp;</td><td><a href='https://administrator.agorapulse.com/bugs/" + row.id + "''>" + row.id + "</a></td><td><a class='searchicon' href='https://app.intercom.com/a/inbox/c0y5aza9/search?q=%22" + row.id + "%22' target='_blank'>&#128270;</a></td><td>" + row.name + "</td><td>" + row.team + "</td><td>&nbsp;</td></tr>";
+      outputTable += "<tr><td>" + rowCounter + "</td><td>&nbsp;</td><td><a href='https://app.agorapulse.com/backoffice/stories/" + row.id + "''>" + row.id + "</a></td><td><a class='searchicon' href='https://app.intercom.com/a/inbox/c0y5aza9/search?q=%22" + row.id + "%22' target='_blank'>&#128270;</a></td><td>" + row.name + "</td><td>" + row.team + "</td><td>&nbsp;</td></tr>";
     });
 
     outputTable += "</tbody>";
