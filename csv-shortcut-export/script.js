@@ -31,7 +31,7 @@ function processCSV() {
 
     outputData.forEach(function(row) {
       rowCounter++;
-      outputTable += "<tr><td>" + rowCounter + "</td><td>&nbsp;</td><td><a href='https://app.agorapulse.com/backoffice/stories/" + row.id + "''>" + row.id + "</a></td><td>" + row.team + "</td><td>&nbsp;</td></tr>";
+      outputTable += "<tr><td>" + rowCounter + "</td><td>&nbsp;</td><td><a href='https://app.agorapulse.com/backoffice/stories/" + row.id + "''>" + row.id + "</a></td><td>" + row.name + "</td><td>" + row.team + "</td><td>&nbsp;</td></tr>";
     });
 
     outputTable += "</tbody>";
