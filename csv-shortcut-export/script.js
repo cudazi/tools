@@ -51,4 +51,5 @@ function processCSV() {
 
   // Hacky way to hide, to make copying the output out easier
   document.getElementById("uploader").style.display = "none";
+  console.log("Finished");
 }
