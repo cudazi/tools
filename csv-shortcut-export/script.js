@@ -18,8 +18,7 @@ function processCSV() {
     // Filter columns
     var outputData = data.map(function(row) {
       return {
-        id: row.id,
-        ic_link : '',
+        id: row.id,        
         name: row.name,
         //external_ticket_count: row.external_ticket_count,
         team: row.team,
@@ -51,5 +50,4 @@ function processCSV() {
 
   // Hacky way to hide, to make copying the output out easier
   document.getElementById("uploader").style.display = "none";
-  console.log("Finished");
 }
