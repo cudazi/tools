@@ -1,1 +1,146 @@
-aaa
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timezone Aware Link Tool</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: #1a1a1a;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        input[type="datetime-local"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .success-message {
+            color: #28a745;
+            margin-top: 10px;
+            display: none;
+            font-size: 0.9rem;
+        }
+        #display-time p {
+            font-size: 1rem;
+            margin-top: 15px;
+        }
+        .generate-link {
+            margin-top: 15px;
+        }
+        .generate-link a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .generate-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Timezone Aware Link Tool</h1>
+        <div id="form-container">
+            <label for="datetime">Select Date and Time:</label>
+            <input type="datetime-local" id="datetime" />
+            <button id="generate">Generate Link</button>
+            <p class="success-message" id="success">Link copied to clipboard and ready to share!</p>
+        </div>
+        <div id="display-time" style="display: none;"></div>
+        <div class="generate-link" id="generate-link" style="display: none;">
+            <a href="./">Generate your own link</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const datetimeParam = urlParams.get('datetime');
+            const displayTime = document.getElementById('display-time');
+            const formContainer = document.getElementById('form-container');
+            const generateLink = document.getElementById('generate-link');
+
+            // Display datetime if available in query params
+            if (datetimeParam) {
+                const utcDate = new Date(datetimeParam);
+                const localDate = utcDate.toLocaleString();
+                displayTime.innerHTML = `<p>The chosen date and time in your timezone: <strong>${localDate}</strong></p>`;
+                displayTime.style.display = 'block';
+                formContainer.style.display = 'none';
+                generateLink.style.display = 'block';
+            }
+
+            const datetimeInput = document.getElementById('datetime');
+            const generateButton = document.getElementById('generate');
+            const successMessage = document.getElementById('success');
+
+            // Set the default value to now
+            datetimeInput.value = new Date().toISOString().slice(0, 16);
+
+            generateButton.addEventListener('click', () => {
+                const datetimeValue = datetimeInput.value;
+                if (!datetimeValue) {
+                    alert('Please select a date and time.');
+                    return;
+                }
+
+                const url = new URL(window.location.href);
+                url.searchParams.set('datetime', datetimeValue);
+
+                navigator.clipboard.writeText(url.toString()).then(() => {
+                    successMessage.style.display = 'block';
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 3000);
+                }).catch(err => {
+                    alert('Failed to copy link to clipboard. Please try again.');
+                    console.error(err);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
