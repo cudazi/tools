@@ -98,16 +98,15 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const datetimeParam = urlParams.get('datetime');
-            const timezoneParam = urlParams.get('timezone');
+            const timestampParam = urlParams.get('timestamp');
             const displayTime = document.getElementById('display-time');
             const formContainer = document.getElementById('form-container');
             const generateLink = document.getElementById('generate-link');
 
             // Display datetime if available in query params
-            if (datetimeParam && timezoneParam) {
-                const utcDate = new Date(datetimeParam + 'Z'); // Ensure it's treated as UTC
-                const localDate = new Date(utcDate.toLocaleString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }));
+            if (timestampParam) {
+                const utcDate = new Date(Number(timestampParam));
+                const localDate = utcDate.toLocaleString();
                 displayTime.innerHTML = `<p>The chosen date and time in your timezone: <strong>${localDate}</strong></p>`;
                 displayTime.style.display = 'block';
                 formContainer.style.display = 'none';
@@ -128,10 +127,9 @@
                     return;
                 }
 
-                const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                const utcTimestamp = new Date(datetimeValue).getTime();
                 const url = new URL(window.location.href);
-                url.searchParams.set('datetime', datetimeValue);
-                url.searchParams.set('timezone', timezone);
+                url.searchParams.set('timestamp', utcTimestamp);
 
                 navigator.clipboard.writeText(url.toString()).then(() => {
                     successMessage.style.display = 'block';
