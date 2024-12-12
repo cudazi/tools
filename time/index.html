@@ -84,7 +84,7 @@
     <div class="container">
         <h1>Timezone Aware Link Tool</h1>
         <div id="form-container">
-            <label for="datetime">Select Date and Time:</label>
+            <label for="datetime">Select Date and Time (your local timezone):</label>
             <input type="datetime-local" id="datetime" />
             <button id="generate">Generate Link</button>
             <p class="success-message" id="success">Link copied to clipboard and ready to share!</p>
@@ -99,14 +99,15 @@
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const datetimeParam = urlParams.get('datetime');
+            const timezoneParam = urlParams.get('timezone');
             const displayTime = document.getElementById('display-time');
             const formContainer = document.getElementById('form-container');
             const generateLink = document.getElementById('generate-link');
 
             // Display datetime if available in query params
-            if (datetimeParam) {
-                const utcDate = new Date(datetimeParam);
-                const localDate = utcDate.toLocaleString();
+            if (datetimeParam && timezoneParam) {
+                const utcDate = new Date(datetimeParam + 'Z'); // Ensure it's treated as UTC
+                const localDate = new Date(utcDate.toLocaleString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }));
                 displayTime.innerHTML = `<p>The chosen date and time in your timezone: <strong>${localDate}</strong></p>`;
                 displayTime.style.display = 'block';
                 formContainer.style.display = 'none';
@@ -127,8 +128,10 @@
                     return;
                 }
 
+                const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
                 const url = new URL(window.location.href);
                 url.searchParams.set('datetime', datetimeValue);
+                url.searchParams.set('timezone', timezone);
 
                 navigator.clipboard.writeText(url.toString()).then(() => {
                     successMessage.style.display = 'block';
