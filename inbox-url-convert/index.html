@@ -1,1 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AgoraPulse URL Builder</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      background: #fafafa;
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 16px;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+    #output {
+      margin-top: 20px;
+      font-weight: bold;
+      word-break: break-all;
+    }
+    a {
+      color: #0077cc;
+    }
+  </style>
+</head>
+<body>
+  <h2>AgoraPulse URL Builder</h2>
 
+  <label for="workspaceId">Workspace ID</label>
+  <input id="workspaceId" type="text" placeholder="e.g. 123456">
+
+  <label for="accountUid">Account UID</label>
+  <input id="accountUid" type="text" placeholder="e.g. fb_78910">
+
+  <label for="itemId">Item ID</label>
+  <input id="itemId" type="text" placeholder="e.g. 54321">
+
+  <button onclick="buildUrl()">Generate URL</button>
+
+  <div id="output"></div>
+
+  <script>
+    function buildUrl() {
+      const workspaceId = document.getElementById('workspaceId').value.trim();
+      const accountUid = document.getElementById('accountUid').value.trim();
+      const itemId = document.getElementById('itemId').value.trim();
+
+      if (!workspaceId || !accountUid || !itemId) {
+        document.getElementById('output').innerHTML = '<span style="color:red;">Please fill in all fields.</span>';
+        return;
+      }
+
+      const url = `https://app.agorapulse.com/inboxV2/${workspaceId}/${accountUid}/presets/${accountUid}_all_items?item=${accountUid}~${itemId}`;
+
+      document.getElementById('output').innerHTML = `<a href="${url}" target="_blank">${url}</a>`;
+    }
+  </script>
+</body>
+</html>
