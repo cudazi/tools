@@ -1,15 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>JSON Date Comparison</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ccc;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        /* small layout tweak for action buttons row */
+        .actions {
+            margin-bottom: 10px;
+        }
+        .actions button {
+            margin-right: 8px;
+        }
+    </style>
+</head>
 <body>
     <h1>JSON Date Comparison</h1>
-    <p>Does not store the input / paste in inbox > `items` object - made for comments, may not work for other types (untested)</p>
+    <p>Does not store the input / paste in inbox &gt; <code>items</code> object - made for comments, may not work for other types (untested)</p>
+
     <textarea id="jsonInput" placeholder="Paste your JSON here..."></textarea>
-    <button id="checkDates">Check Item Dates</button>
-    <button id="clearResults" style="margin-left:10px;">Clear Results</button>
-    <button id="downloadCSV" style="margin-left:10px;">Download CSV</button>
+
+    <div class="actions">
+        <button id="checkDates">Check Item Dates</button>
+        <button id="clearResults">Clear Results</button>
+        <button id="downloadCSV">Download CSV</button>
+    </div>
 
     <h2>Results (CSV Format)</h2>
     <pre id="results">CSV output will appear here...</pre>
 
     <script>
+        // Accumulates CSV across runs until cleared
         let accumulatedCSV = "";
 
         function formatTimeDifference(minutes) {
@@ -18,8 +60,13 @@
             const remainingMinutes = Math.floor(minutes % 60);
 
             let result = "";
-            if (days > 0) result += `${days} day${days === 1 ? "" : "s"}, `;
-            if (hours > 0 || days > 0) result += `${hours} hour${hours === 1 ? "" : "s"}, `;
+            if (days > 0) {
+                result += `${days} day${days === 1 ? "" : "s"}, `;
+            }
+            if (hours > 0 || days > 0) {
+                result += `${hours} hour${hours === 1 ? "" : "s"}, `;
+            }
+
             result += `${remainingMinutes} min`;
             return result;
         }
@@ -28,38 +75,48 @@
             const jsonInput = document.getElementById("jsonInput").value;
             const resultsContainer = document.getElementById("results");
 
+            // testedDate is the timestamp for this run (ISO trimmed to seconds, Z appended)
+            const testedDate = new Date().toISOString().split('.')[0] + 'Z';
+
             try {
                 const items = JSON.parse(jsonInput);
-                let csvOutput = "";
 
-                // If no previous runs, add header
+                // Build csv for this run; include header only if accumulatedCSV is empty
+                let csvOutput = "";
                 if (!accumulatedCSV) {
-                    csvOutput += "Time Difference,Sync Type,Username,parentId,itemID,networkDate,createdDate\n";
+                    csvOutput += "Time Difference,Sync Type,Username,parentId,itemID,networkDate,createdDate,testedDate\n";
                 }
 
-                items.forEach((item) => {
-                    const networkDate = new Date(item.creationDate);
+                // if input is a plain object containing an items array, try to use items.items
+                const list = Array.isArray(items) ? items : (Array.isArray(items.items) ? items.items : []);
+
+                // if list is empty but parsed root is an object that looks like array-like keys, fallback to attempting forEach on items
+                const iter = list.length ? list : (Array.isArray(items) ? items : []);
+
+                iter.forEach((item) => {
+                    const networkDate = item.creationDate ? new Date(item.creationDate) : null;
                     const history = item.historyHidden?.find(h => h.name === "created");
                     const syncType = item.historyHidden?.find(h => h.params?.from)?.params?.from || "";
                     const userName = item.createdByUserName || "n/a";
                     const parentId = item.parentId || "NoParentId";
                     const id = item.id || "NoID";
 
-                    if (history) {
+                    if (history && networkDate && !isNaN(networkDate)) {
                         const databaseDate = new Date(history.date);
                         const differenceMinutes = Math.abs((networkDate - databaseDate) / (1000 * 60));
                         const differenceText = formatTimeDifference(differenceMinutes);
                         const cleanNetworkDate = networkDate.toISOString().split('.')[0] + 'Z';
                         const cleanDatabaseDate = databaseDate.toISOString().split('.')[0] + 'Z';
 
-                        csvOutput += `"${differenceText}","${syncType}","${userName}","${parentId}","${id}","${cleanNetworkDate}","${cleanDatabaseDate}"\n`;
+                        csvOutput += `"${differenceText}","${syncType}","${userName}","${parentId}","${id}","${cleanNetworkDate}","${cleanDatabaseDate}","${testedDate}"\n`;
                     } else {
-                        csvOutput += `"No valid 'created' history entry","","${userName}","${parentId}","${id}"\n`;
+                        // keep columns consistent; network/created dates left empty if invalid
+                        csvOutput += `"No valid 'created' history entry","${syncType}","${userName}","${parentId}","${id}","","","${testedDate}"\n`;
                     }
                 });
 
                 accumulatedCSV += csvOutput;
-                resultsContainer.textContent = accumulatedCSV;
+                resultsContainer.textContent = accumulatedCSV || "CSV output will appear here...";
             } catch (error) {
                 resultsContainer.textContent = `Error parsing JSON: ${error.message}`;
             }
@@ -68,6 +125,8 @@
         document.getElementById("clearResults").addEventListener("click", () => {
             accumulatedCSV = "";
             document.getElementById("results").textContent = "CSV output will appear here...";
+            // also clear the main textarea as requested
+            document.getElementById("jsonInput").value = "";
         });
 
         document.getElementById("downloadCSV").addEventListener("click", () => {
@@ -78,10 +137,14 @@
             const blob = new Blob([accumulatedCSV], { type: "text/csv" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
+
+            // include timestamp in filename for convenience
+            const ts = new Date().toISOString().replace(/[:.]/g, '-').split('T').join('_').replace(/Z$/, '');
             a.href = url;
-            a.download = "results.csv";
+            a.download = `results_${ts}.csv`;
             a.click();
             URL.revokeObjectURL(url);
         });
     </script>
 </body>
+</html>
